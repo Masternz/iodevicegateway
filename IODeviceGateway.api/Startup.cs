@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
+using IODeviceGateway.api.DigitalIO;
 namespace IODeviceGateway.api
 {
     public class Startup
@@ -24,6 +24,7 @@ namespace IODeviceGateway.api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddTransient<IDigitalIOService, DigitalIOService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
