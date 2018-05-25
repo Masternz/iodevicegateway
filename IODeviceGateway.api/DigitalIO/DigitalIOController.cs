@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace IODeviceGateway.api.DigitalIO
 {
     
-    [Route("api/[controller]")]
+    [Route("api/[controller]/in/")]
     public class DigitalIOController : Controller
     {
         
@@ -19,9 +21,15 @@ namespace IODeviceGateway.api.DigitalIO
         
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            try{
+                return Ok(await _service.GetInputsAsynch());
+            }
+            catch(Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // GET api/values/5
@@ -32,16 +40,15 @@ namespace IODeviceGateway.api.DigitalIO
             {
                 return Ok(await _service.GetInputAsynch(pin));
             }
-            catch(Exception exc)
+            catch(HttpRequestException httpRequestException)
             {
-                return BadRequest(exc.Message);
+                System.Diagnostics.Trace.WriteLine($"HResult {httpRequestException.HResult.ToString()}");
+                return BadRequest(httpRequestException.Message);
             }
-        }
-
-        // PUT api/values/5
-        [HttpPut("{pin},{pulse}")]
-        public void Put(int pin, bool pulse)
-        {
+            catch(Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
     }

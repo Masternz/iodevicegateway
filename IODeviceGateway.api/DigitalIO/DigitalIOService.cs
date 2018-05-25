@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace IODeviceGateway.api.DigitalIO
 {
@@ -11,49 +12,65 @@ namespace IODeviceGateway.api.DigitalIO
     public interface IDigitalIOService
     {
         Task<DigitalInputViewDTO> GetInputAsynch(int pin);
-        List<DigitalInputViewDTO> GetInputs();
-        bool SetInput(DigitalInputUpdateDTO input);
+        Task<List<DigitalInputViewDTO>> GetInputsAsynch();
     }
 
     public class DigitalIOService : IDigitalIOService
     {
-        IConfiguration _configuration;
+        const int MAX_PIN = 7;
+        const int MIN_PIN = 0;
+        private readonly IConfiguration _configuration;
+        private readonly HttpMessageInvoker _httpMessageInvoker;
         
-        public DigitalIOService(IConfiguration configuration)
+        public DigitalIOService(IConfiguration configuration, HttpMessageInvoker messageInvoker)
         {
             _configuration = configuration;
+            _httpMessageInvoker = messageInvoker;
         }
         
         public async Task<DigitalInputViewDTO> GetInputAsynch(int pin)
         {
             //http://192.168.1.130:8126/io/in/6
-            
+
             var baseUrl = _configuration["ioDeviceBaseURI"];
-            DigitalInputViewEntity internalResult = null;
+            string internalResult = null;
             DigitalInputViewDTO result = null;
+            PinInRange(pin);
 
-            using (var client = new HttpClient())
-            {
-                try
-                {
-                    client.BaseAddress = new Uri(baseUrl);
-                    var response = await client.GetAsync($"/io/in/{pin.ToString()}");
-                    response.EnsureSuccessStatusCode();
+            internalResult = await CallDevice(baseUrl, $"/io/in/{pin.ToString()}");
 
-                    var stringResult = await response.Content.ReadAsStringAsync();
-                    internalResult = JsonConvert.DeserializeObject<DigitalInputViewEntity>(stringResult);
-                    
-                }
-                catch (Exception exc)
-                {
-                    System.Diagnostics.Trace.WriteLine(exc.Message);
-                    throw exc;
-                }
-            }
+            var jsonResult = JsonConvert.DeserializeObject<DigitalInputViewEntity>(internalResult);
 
-            result = MapInternalToExternal(internalResult);
+            result = MapInternalToExternal(jsonResult);
 
             return result;
+        }
+
+        private static void PinInRange(int pin)
+        {
+            if ((pin > MAX_PIN) && (pin <= MIN_PIN))
+                throw new HttpRequestException($"PIN must be in the range {MIN_PIN} to {MAX_PIN}");
+        }
+
+        private async Task<string> CallDevice(string baseUrl, string parameterString)
+        {
+           // string stringResult = null;
+
+            using(var httpRequestMessage = new HttpRequestMessage())
+            {
+                httpRequestMessage.Method = new HttpMethod(HttpMethod.Get.Method);
+                httpRequestMessage.RequestUri = new Uri(baseUrl + parameterString);
+
+                using (var httpResponseMessage = await _httpMessageInvoker.SendAsync(httpRequestMessage, default(CancellationToken)))
+                {
+                    httpResponseMessage.EnsureSuccessStatusCode();
+
+                    var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
+                    return responseString;
+                }
+
+            }
+
         }
 
         private DigitalInputViewDTO MapInternalToExternal(DigitalInputViewEntity internalResult)
@@ -65,14 +82,24 @@ namespace IODeviceGateway.api.DigitalIO
             };
         }
 
-        public List<DigitalInputViewDTO> GetInputs()
+        public async Task<List<DigitalInputViewDTO>> GetInputsAsynch()
         {
-            throw new NotImplementedException();
+            var baseUrl = _configuration["ioDeviceBaseURI"];
+            List<DigitalInputViewEntity> internalResult = new List<DigitalInputViewEntity>();
+            List<DigitalInputViewDTO> result = new List<DigitalInputViewDTO>();
+
+            string jsonResult = await CallDevice(baseUrl, $"/io/in/");
+
+            internalResult = JsonConvert.DeserializeObject<List<DigitalInputViewEntity>>(jsonResult);
+
+            foreach(DigitalInputViewEntity entity in internalResult)
+            {
+                result.Add(MapInternalToExternal(entity));
+            }
+
+            return result;    
+            
         }
 
-        public bool SetInput(DigitalInputUpdateDTO input)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

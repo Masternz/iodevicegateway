@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/IODeviceGateway-api/IODeviceGateway-api.csproj"
+                "${workspaceFolder}/IODeviceGateway.api/IODeviceGateway.api.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

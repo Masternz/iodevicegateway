@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using IODeviceGateway.api.DigitalIO;
+using System.Net.Http;
+
 namespace IODeviceGateway.api
 {
     public class Startup
@@ -25,6 +27,12 @@ namespace IODeviceGateway.api
         {
             services.AddMvc();
             services.AddTransient<IDigitalIOService, DigitalIOService>();
+            services.AddTransient<IDigitalOutputService, DigitalOutputService>();
+
+            var client = new HttpClient();
+            services.AddSingleton<HttpMessageInvoker>(client);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

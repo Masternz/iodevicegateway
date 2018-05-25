@@ -11,9 +11,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/IODeviceGateway-api/bin/Debug/netcoreapp2.0/IODeviceGateway-api.dll",
+            "program": "${workspaceFolder}/IODeviceGateway.api/bin/Debug/netcoreapp2.0/IODeviceGateway.api.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/IODeviceGateway-api",
+            "cwd": "${workspaceFolder}/IODeviceGateway.api",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {
