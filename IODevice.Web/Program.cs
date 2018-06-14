@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,9 +7,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Net;
 
-namespace IODeviceGateway.api
+namespace IODevice.Web
 {
     public class Program
     {
@@ -18,17 +17,9 @@ namespace IODeviceGateway.api
             BuildWebHost(args).Run();
         }
 
-public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseKestrel(
-                    options => 
-                    {
-                        options.Listen(IPAddress.Any, 8089, listenOptions => {
-                            
-                        });
-                    }
-                )
                 .Build();
     }
 }

@@ -6,7 +6,7 @@ WORKDIR /root/src/app
 COPY . api
 WORKDIR /root/src/app/api
 
-RUN dotnet restore ./IODeviceGateway.api.csproj  
+RUN dotnet restore ./IODeviceEmulator.api.csproj  
 RUN dotnet publish -c release -o published
 #RUN dotnet publish -c release -o published -r linux-arm
 
@@ -16,11 +16,13 @@ WORKDIR /app/
 
 COPY --from=builder /root/src/app/api/published .
 
-CMD ["dotnet", "IODeviceGateway.api.dll"]
+CMD ["dotnet", "IODeviceEmulator.api.dll"]
 
+# Create a network
+# docker network create --driver bridge iot-net
 # Run this Docker file with 
-# docker build -t masternz/devicegateway-api:1.0 .
+# docker build -t masternz/iodevice-emulator-api:1.2 .
 # Push to docker hub
-#docker push masternz/devicegateway-api:1.0
+#docker push masternz/iodevice-emulator-api:1.2
 # run the docker image
-#docker run -d --env ioDeviceBaseURI=http://iot-emulator:8088 --name iot-gateway --network iot-net -p 8089:8089 masternz/devicegateway-api:1.0
+#docker run -d --name iot-emulator --network iot-net -p 8088:8088 masternz/iodevice-emulator-api:1.2

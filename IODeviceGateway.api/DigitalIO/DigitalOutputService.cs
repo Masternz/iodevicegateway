@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Text;
 
 namespace IODeviceGateway.api.DigitalIO
 {
@@ -31,9 +32,21 @@ public interface IDigitalOutputService
             _httpMessageInvoker = httpMessageInvoker;
         }
         
-        public Task<DigitalOutputViewDTO> GetOutputAsync(int pin)
+        public async Task<DigitalOutputViewDTO> GetOutputAsync(int pin)
         {
-            throw new NotImplementedException();
+            PinInRange(pin);
+            
+            var baseUrl = _configuration["ioDeviceBaseURI"];
+            string internalResult = null;
+
+            internalResult = await CallDevice(baseUrl, $"/io/out/{pin}");
+
+            var formatedResult = JsonConvert.DeserializeObject<DigitalOutputViewEntity>(internalResult);
+
+            DigitalOutputViewDTO dto = MapInternalToExternal(formatedResult);
+
+            return dto;
+
         }
 
         public async Task<List<DigitalOutputViewDTO>> GetOutputsAsync()
@@ -99,9 +112,11 @@ public interface IDigitalOutputService
             {
                 httpRequestMessage.Method = new HttpMethod(HttpMethod.Put.Method);
                 httpRequestMessage.RequestUri = new Uri(baseUrl + parameterString);
+                // httpRequestMessage.Headers.TryAddWithoutValidation("Content-Type", "application/json");
                 var jsonMessage = JsonConvert.SerializeObject(entity);
 
-                httpRequestMessage.Content = new StringContent(jsonMessage);
+                httpRequestMessage.Content = new StringContent(jsonMessage, Encoding.UTF8, "application/json");
+
 
                 using (var httpResponseMessage = await _httpMessageInvoker.SendAsync(httpRequestMessage, default(CancellationToken)))
                 {

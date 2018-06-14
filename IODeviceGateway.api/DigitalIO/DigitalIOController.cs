@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Http;
 namespace IODeviceGateway.api.DigitalIO
 {
     
-    [Route("api/[controller]/in/")]
-    public class DigitalIOController : Controller
+    [Route("api/[controller]")]
+    public class DigitalInputController : Controller
     {
         
         private readonly IDigitalIOService _service;
-        public DigitalIOController(IDigitalIOService service)
+        public DigitalInputController(IDigitalIOService service)
         {
             _service = service;
         }

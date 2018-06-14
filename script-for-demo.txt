@@ -1,0 +1,114 @@
+# script for demonstration
+
+To do:
+Get docker compose working
+Deploy to K8s locally
+Deploy to K8s GKE
+Push to git hub and docker hub
+
+Overview of whats in the presentation.
+- The solution
+- Show using websequence diagrams
+
+https://www.websequencediagrams.com/
+#Postman->Gateway:Getoutputs
+#Gateway->Device:GetOutputs
+##Gateway->Emulator:GetOutputs
+#Postman->Gateway:SetOutput
+#Gateway->Device:SetOutput
+##Gateway->Emulator:SetOutput
+#Postman->Gateway:Getoutputs
+#Gateway->Device:GetOutputs
+##Gateway->Emulator:GetOutputs
+
+#Postman->Gateway:Getoutputs
+#Gateway->Device:GetOutputs
+#Postman->Gateway:SetOutput
+#Gateway->Device:SetOutput
+#Postman->Gateway:Getoutputs
+#Gateway->Device:GetOutputs
+
+#Postman->Gateway:Getoutputs
+#Gateway->Emulator:GetOutputs
+#Postman->Gateway:SetOutput
+#Gateway->Emulator:SetOutput
+#Postman->Gateway:Getoutputs
+#Gateway->Emulator:GetOutputs
+
+
+- The tooling options
+-- VS Code on MAC
+-- VS on Windows 10
+- The differnet hosting options
+-- Show running just locally no containers
+--- running through the debugger
+-- Show how being built. run through the docker file.
+-- Individual Docker containers running on my machine
+-- Setting up the networking.
+-- Orchestrate with Docker compose
+
+-- Kubernetes on my local machine
+-- Kubernetes GKE.
+
+
+
+- Orchestration
+-- Scaling
+
+
+Run each API individually.
+Add Emulator to a Docker image.
+Add Gateway to Docker image.
+Instructions are in Dockerfile
+
+Steps to build your docker containers
+Go through Docker file
+Using docker images to build .NET core and then your images.
+
+Docker running locally
+-- set up networking
+-- Docker creation for both
+-- Docker Run for both
+Docker compose
+docker-compose up -d
+docker-compose down
+
+docker inspect iot-gateway
+
+
+
+Kubernetes running locally
+-- Service
+-- Pods
+-- Deployment
+
+Kubernetes running on GKE
+
+
+
+
+#Creation
+## Networking
+docker network create --driver bridge iot-net
+docker network ls
+docker network inspect iot-net
+
+## Container
+
+docker run -d --name iot-emulator --network iot-net -p 8088:8088 masternz/iodevice-emulator-api:1.2
+docker run -d --env ioDeviceBaseURI=http://iot-emulator:8088 --name iot-gateway --network iot-net -p 8089:8089 masternz/devicegateway-api:1.0
+
+docker pause iot-emulator
+docker unpause iot-emulator
+
+#Clean up
+
+docker ps -a
+
+Stop all docker containers
+docker stop $(docker ps -a -q)
+docker rm  $(docker ps -a -q)
+docker network rm iot-net
+
+start iot-emulator
+start iot-gateway

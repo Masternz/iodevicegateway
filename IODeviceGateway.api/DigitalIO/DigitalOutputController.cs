@@ -28,6 +28,22 @@ namespace IODeviceGateway.api.DigitalIO
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpGet("{pin}")]
+        public async Task<IActionResult> Get(int pin)
+        {
+            try{
+                return Ok(await _service.GetOutputAsync(pin));
+            }
+            catch(Exception) // could also be a 404 error.
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] DigitalOutputUpdateDTO content)
         {

@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  iot-gateway:
+    image: masternz/devicegateway-api:1.0
+    container_name: iot-gateway
+    environment: 
+      - "ioDeviceBaseURI=http://iot-emulator:8088"
+    ports: 
+      - "8089:8089"
+    depends_on:
+      - "iot-emulator"
+    networks:
+      - iot-net
+
+
+  iot-emulator:
+    image: masternz/iodevice-emulator-api:1.2
+    container_name: iot-emulator
+    ports: 
+      - "8088:8088"
+    networks:
+      - iot-net
+
+networks:
+  iot-net:
