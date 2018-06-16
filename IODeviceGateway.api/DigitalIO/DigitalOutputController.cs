@@ -21,6 +21,7 @@ namespace IODeviceGateway.api.DigitalIO
         public async Task<IActionResult> Get()
         {
             try{
+                System.Diagnostics.Trace.WriteLine("Outputs::Get");
                 return Ok(await _service.GetOutputsAsync());
             }
             catch(Exception)

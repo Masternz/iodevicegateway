@@ -2,7 +2,7 @@ version: "3"
 
 services:
   iot-gateway:
-    image: masternz/devicegateway-api:1.0
+    image: masternz/devicegateway-api:1.1
     container_name: iot-gateway
     environment: 
       - "ioDeviceBaseURI=http://iot-emulator:8088"

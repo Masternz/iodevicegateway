@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: device-gateway-svc
+  labels:
+    app: device-gateway
+spec:
+  type: NodePort
+  ports:
+  - port: 8089
+    nodePort: 30003
+    protocol: TCP
+  selector:
+    app: device-gateway

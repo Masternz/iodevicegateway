@@ -19,8 +19,8 @@ COPY --from=builder /root/src/app/api/published .
 CMD ["dotnet", "IODeviceGateway.api.dll"]
 
 # Run this Docker file with 
-# docker build -t masternz/devicegateway-api:1.0 .
+# docker build -t masternz/devicegateway-api:1.1 .
 # Push to docker hub
-#docker push masternz/devicegateway-api:1.0
+#docker push masternz/devicegateway-api:1.1
 # run the docker image
-#docker run -d --env ioDeviceBaseURI=http://iot-emulator:8088 --name iot-gateway --network iot-net -p 8089:8089 masternz/devicegateway-api:1.0
+#docker run -d --env ioDeviceBaseURI=http://iot-emulator:8088 --name iot-gateway --network iot-net -p 8089:8089 masternz/devicegateway-api:1.1
