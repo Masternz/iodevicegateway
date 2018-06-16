@@ -6,6 +6,6 @@ kubectl -n iot apply -f emulator-deploy.yaml
 
 DNS for the emulator
 device-emulator-svc.iot.svc.cluster.local
-so the environment variable would be
-device-emulator-svc.iot.svc.cluster.local:8088
+so the environment variable would be (because we are in the same namesapce)
+device-emulator-svc:8088
 
